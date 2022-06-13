@@ -1,0 +1,8 @@
+.editorconfig
+.env.example
+.gitattributes
+.gitignore
+.styleci.yml
+README.md
+vendor
+bootstrap/cache/

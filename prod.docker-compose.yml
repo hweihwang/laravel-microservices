@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+  octane:
+    build:
+      context: .
+      dockerfile: prod.octane.dockerfile
+    container_name: octane_${APP_NAME}
+    env_file:
+      - .env
+    entrypoint: /entrypoint.sh
+    restart: unless-stopped
+    tty: true
+    ports:
+      - ${OCTANE_PORT}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - elasticsearch
+      - rabbitmq
+    networks:
+      - base
+
+  elasticsearch:
+    image: elasticsearch:8.2.0
+    container_name: elasticsearch_${APP_NAME}
+    env_file:
+      - .env
+    restart: unless-stopped
+    tty: true
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    volumes:
+      - ./es_db:/usr/share/elasticsearch/data
+    ports:
+      - ${ELASTIC_PORT}
+    networks:
+      - base
+
+  rabbitmq:
+    image: rabbitmq:alpine
+    container_name: rabbitmq_${APP_NAME}
+    env_file:
+      - .env
+    restart: unless-stopped
+    tty: true
+    ports:
+      - ${RABBITMQ_PORT}
+    networks:
+      - base
+
+networks:
+  base:
+    driver: bridge
