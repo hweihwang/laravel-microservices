@@ -31,7 +31,7 @@ return [
         ],
         'queue' => [
             'job' => VladimirYuldashev\LaravelQueueRabbitMQ\Queue\Jobs\RabbitMQJob::class,
-            'exchange' => 'catalog-service',
+            'exchange' => 'base-service',
             'exchange_type' => 'fanout',
             'exchange_routing_key' => '',
         ],
